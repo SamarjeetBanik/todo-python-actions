@@ -1,9 +1,10 @@
-name: Build, Test, and Deploy
+name: build-test-deploy-pages
 
 on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   build:

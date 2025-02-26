@@ -72,10 +72,10 @@ jobs:
           static_site_generator: next
       - run: python -m pip install --upgrade pip
       - run: pip install -r requirements.txt
-      - name: upload artifacts
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './out'
+      # - name: upload artifacts
+        # uses: actions/upload-pages-artifact@v3
+        # with:
+          # path: './out'
       - name: deploy
         id: deployment
         uses: actions/deploy-pages@v4

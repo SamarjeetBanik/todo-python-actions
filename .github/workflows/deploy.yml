@@ -1,5 +1,3 @@
-# 
-
 name: build-test-deploy-pages
 
 on:
@@ -26,13 +24,32 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Freeze Flask app
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
       run: |
-        python freeze.py
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: |
+        # Add your test commands here
+        
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: test
     permissions:
       contents: write
       pages: write
@@ -41,11 +58,24 @@ jobs:
       name: production
       url: ${{ github.event.repository.html_url }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: checkout repo
+        uses: actions/checkout@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: build  # This is the directory where Frozen-Flask outputs the static files
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: configure github pages
+        uses: actions/configure-pages@v4
+        with:
+          static_site_generator: next
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements.txt
+      - name: upload artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - name: deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

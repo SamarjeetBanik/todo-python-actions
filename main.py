@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, render_template
+from flask_frozen import Freezer
 
 app = Flask(__name__)
+freezer = Freezer(app)
 
 # In-memory storage for to-do items
 todos = []
@@ -30,3 +32,9 @@ def delete_todo(todo_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+# Add this to freeze the app
+@freezer.register_generator
+def url_generator():
+    yield 'index'
+    yield 'get_todos'
